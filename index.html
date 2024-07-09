@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D'oh-AI Comedy Club</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="splash-screen" class="screen">
+            <h1>D'oh-AI Comedy Club</h1>
+            <img src="https://via.placeholder.com/200x200.png?text=8-bit+Homer" alt="8-bit Homer">
+            <button id="start-button">Start Game</button>
+        </div>
+        
+        <div id="game-screen" class="screen hidden">
+            <div id="score-display">Score: <span id="score">0</span></div>
+            <div id="round-display">Round: <span id="round">1</span>/10</div>
+            <img id="homer-image" src="https://via.placeholder.com/200x200.png?text=8-bit+Homer" alt="8-bit Homer">
+            <div id="joke-options"></div>
+            <div id="response-overlay" class="hidden">
+                <p id="response-text"></p>
+            </div>
+        </div>
+        
+        <div id="end-screen" class="screen hidden">
+            <h2>Game Over!</h2>
+            <p>Final Score: <span id="final-score"></span></p>
+            <button id="restart-button">Play Again</button>
+        </div>
+    </div>
+    
+    <script src="js/JokeSelector.js"></script>
+    <script src="js/ScoreKeeper.js"></script>
+    <script src="js/SoundManager.js"></script>
+    <script src="js/DohAIComedyClub.js"></script>
+    <script src="js/UIController.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
