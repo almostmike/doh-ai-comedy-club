@@ -23,6 +23,3 @@ class JokeSelector {
     this.usedGroups.clear();
   }
 }
-
-// Usage
-const jokeSelector = new JokeSelector(20); // 20 is the total number of joke groups

@@ -31,6 +31,7 @@ const jokeGroups = [
       { text: "Groundskeeper Willie's kilt is the original Scottish firewall.", rating: 1, response: "Boo" }
     ]
   },
+
   {
     id: 5,
     jokes: [
@@ -159,7 +160,8 @@ const jokeGroups = [
       { text: "Bart's permanent record and Homer's liver have a lot in common: they're both full and nobody wants to look at them.", rating: 1, response: "Boo" }
     ]
   },
-  {
+    
+{
     id: 21,
     jokes: [
       { text: "I trained an AI on dad jokes. Now it's a pun-dit.", rating: 3, response: "Cheer" },
@@ -167,7 +169,13 @@ const jokeGroups = [
       { text: "I asked an AI to write a Simpsons episode. It was mostly 'D'oh!'-nuts.", rating: 1, response: "Boo" }
     ]
   }
+
 ];
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // ... rest of your existing code
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("DOM Content Loaded");

@@ -1,93 +1,117 @@
 class DohAIComedyClub {
-  constructor(jokeGroups) {
-    this.jokeGroups = jokeGroups;
-    this.jokeSelector = new JokeSelector(jokeGroups.length);
-    this.scoreKeeper = new ScoreKeeper();
-    this.currentRound = 0;
-    this.maxRounds = 10;
-    this.currentJokes = null;
-    this.ui = null; // Will be set by UIController
-    this.sounds = {
-      drumroll: new Audio('sounds/drumroll.mp3'),
-      cheer: new Audio('sounds/cheer.mp3'),
-      meh: new Audio('sounds/meh.mp3'),
-      boo: new Audio('sounds/boo.mp3')
-    };
-  }
-
-  setUI(ui) {
-    this.ui = ui;
-  }
-
-  startGame() {
-    this.jokeSelector.resetUsedGroups();
-    this.scoreKeeper.resetScore();
-    this.currentRound = 0;
-    this.nextRound();
-  }
-
-  nextRound() {
-    if (this.currentRound >= this.maxRounds) {
-      this.endGame();
-      return;
+    constructor(jokeGroups, soundManager) {
+        this.jokeGroups = jokeGroups;
+        this.jokeSelector = new JokeSelector(jokeGroups.length);
+        this.scoreKeeper = new ScoreKeeper();
+        this.currentRound = 0;
+        this.maxRounds = 10;
+        this.currentJokes = null;
+        this.ui = null;
+        this.soundManager = soundManager;
     }
 
-    this.currentRound++;
-    const groupId = this.jokeSelector.selectJokeGroup();
-    if (groupId === null) {
-      this.endGame();
-      return;
+    setUI(ui) {
+        this.ui = ui;
     }
 
-    this.currentJokes = this.jokeGroups[groupId - 1].jokes;
-    this.ui.updateRound(this.currentRound);
-    this.ui.updateJokes(this.currentJokes);
-  }
-
-  async selectJoke(jokeIndex) {
-    if (!this.currentJokes) return;
-
-    const selectedJoke = this.currentJokes[jokeIndex];
-    await this.playDrumroll();
-    this.revealJokeResponse(selectedJoke);
-    this.scoreKeeper.updateScore(selectedJoke.rating);
-    this.ui.updateScore(this.scoreKeeper.getScore());
-
-    setTimeout(() => this.nextRound(), 3000); // Wait 3 seconds before next round
-  }
-
-  async playDrumroll() {
-    return new Promise(resolve => {
-      this.sounds.drumroll.play();
-      this.sounds.drumroll.onended = resolve;
-    });
-  }
-
-  revealJokeResponse(joke) {
-    this.ui.showResponse(joke.response);
-    this.playResponseSound(joke.rating);
-  }
-
-  playResponseSound(rating) {
-    switch(rating) {
-      case 3:
-        this.sounds.cheer.play();
-        break;
-      case 2:
-        this.sounds.meh.play();
-        break;
-      case 1:
-        this.sounds.boo.play();
-        break;
+    startGame() {
+        console.log("Starting game");
+        this.jokeSelector.resetUsedGroups();
+        this.scoreKeeper.resetScore();
+        this.currentRound = 0;
+        this.nextRound();
     }
-  }
 
-  endGame() {
-    this.ui.endGame(this.scoreKeeper.getScore());
-  }
+    nextRound() {
+        console.log("Next round called, current round:", this.currentRound);
+        if (this.currentRound >= this.maxRounds) {
+            console.log("Max rounds reached, ending game");
+            this.endGame();
+            return;
+        }
+        this.currentRound++;
+        const groupId = this.jokeSelector.selectJokeGroup();
+        console.log("Selected group ID:", groupId);
+        if (groupId === null || groupId === undefined) {
+            console.log("No more joke groups available, ending game");
+            this.endGame();
+            return;
+        }
+        if (this.jokeGroups[groupId - 1]) {
+            this.currentJokes = this.jokeGroups[groupId - 1].jokes;
+            console.log("Current jokes:", this.currentJokes);
+            if (this.ui) {
+                this.ui.updateRound(this.currentRound);
+                this.ui.updateJokes(this.currentJokes);
+            } else {
+                console.error("UI not set. Cannot update round and jokes.");
+            }
+        } else {
+            console.error("Invalid group ID:", groupId);
+            this.endGame();
+        }
+    }
+
+    async selectJoke(jokeIndex) {
+        console.log(`DohAIComedyClub: Joke selected: ${jokeIndex}`);
+        if (!this.currentJokes) return;
+        const selectedJoke = this.currentJokes[jokeIndex];
+        await this.playDrumroll();
+        this.revealJokeResponse(selectedJoke);
+        this.scoreKeeper.updateScore(selectedJoke.rating);
+        if (this.ui) {
+            this.ui.updateScore(this.scoreKeeper.getScore());
+        }
+        const delay = selectedJoke.response === 'Boo' ? 8000 : 3000;
+        setTimeout(() => this.nextRound(), delay);
+    }
+
+    async playDrumroll() {
+        return new Promise(resolve => {
+            if (this.soundManager) {
+                this.soundManager.play('drumroll');
+            } else {
+                console.error("Sound manager not available");
+            }
+            setTimeout(resolve, 2000);
+        });
+    }
+
+    revealJokeResponse(joke) {
+        if (this.ui) {
+            this.ui.showResponse(joke.response);
+        } else {
+            console.error("UI not set. Cannot show response.");
+        }
+        this.playResponseSound(joke.rating);
+    }
+
+    playResponseSound(rating) {
+        if (!this.soundManager) {
+            console.error("Sound manager not available");
+            return;
+        }
+        switch(rating) {
+            case 3:
+                this.soundManager.play('cheer');
+                break;
+            case 2:
+                this.soundManager.play('meh');
+                break;
+            case 1:
+                this.soundManager.play('boo');
+                break;
+            default:
+                console.error("Invalid rating for sound:", rating);
+        }
+    }
+
+    endGame() {
+        console.log("Game ended");
+        if (this.ui) {
+            this.ui.endGame(this.scoreKeeper.getScore());
+        } else {
+            console.error("UI not set. Cannot end game.");
+        }
+    }
 }
-
-// Usage
-const game = new DohAIComedyClub(jokeGroups);
-const uiController = new UIController(game);
-game.setUI(uiController);

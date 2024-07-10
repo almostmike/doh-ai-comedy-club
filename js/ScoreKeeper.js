@@ -27,6 +27,3 @@ class ScoreKeeper {
     this.score = 0;
   }
 }
-
-// Usage
-const scoreKeeper = new ScoreKeeper();
