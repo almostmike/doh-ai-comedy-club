@@ -76,9 +76,10 @@ class UIController {
         }
         jokeOptionsElement.innerHTML = '';
 
-        const shuffledJokes = [...jokes].sort(() => Math.random() - 0.5);
+        // Shuffle the jokes and keep track of original indices
+        const shuffledJokes = jokes.map((joke, index) => ({ joke, index })).sort(() => Math.random() - 0.5);
 
-        shuffledJokes.forEach((joke, index) => {
+        shuffledJokes.forEach(({ joke, index }) => {
             const jokeElement = this.createJokeElement(joke, index);
             jokeOptionsElement.appendChild(jokeElement);
             console.log(`Added joke option: ${joke.text}`);
@@ -94,7 +95,7 @@ class UIController {
         jokeElement.addEventListener('click', (event) => {
             console.log(`Joke option clicked`, event);
             event.stopPropagation();
-            this.game.selectJoke(index);
+            this.game.selectJoke(index); // Pass the original index to the game logic
         });
         return jokeElement;
     }
@@ -161,3 +162,4 @@ class UIController {
         this.tryPlayMusic(); // Play music on game over screen
     }
 }
+
